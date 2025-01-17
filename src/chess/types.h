@@ -35,6 +35,13 @@ enum Square : int {
     NULL_SQ = 64
 };
 
+constexpr inline bool is_peripheral(const Square sq) {
+    return (sq & 0x07) == 0 ||
+           (sq & 0x07) == 7 ||
+           (sq & 0x38) == 0 ||
+           (sq & 0x38) == 0x38;
+}
+
 enum Direction : int {
     N = 8,
     NE = 9,

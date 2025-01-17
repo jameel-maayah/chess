@@ -2,26 +2,26 @@
 
 #include "types.h"
 
-enum Flag : int {
-    // may need more later
-
-    QUIET = 0b0001,
-    CAPTURE,
-    CHECK,
-    DOUBLE_CHECK,
-    PROMOTION_KNIGHT,
-    PROMOTION_BISHOP,
-    PROMOTION_ROOK,
-    PROMOTION_QUEEN
-};
-
 class Move {
     private:
         uint16_t repr;
 
     public:
-        inline Move() : repr( NULL ) { };
-        inline Move(Square source, Square target) : repr( NULL ) {
+        enum Flag : int {
+            // may need more later
+
+            QUIET = 0b0001,
+            CAPTURE, // encode later
+            CHECK,
+            DOUBLE_CHECK,
+            PROMOTION_KNIGHT,
+            PROMOTION_BISHOP,
+            PROMOTION_ROOK,
+            PROMOTION_QUEEN
+        };
+
+        inline Move() : repr( 0x0000 ) { };
+        inline Move(Square source, Square target) : repr( 0x0000 ) {
             repr = (source << 6) | (target);
         };
 
