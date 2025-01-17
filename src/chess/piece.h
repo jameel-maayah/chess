@@ -29,6 +29,7 @@ class Piece {
 
         [[nodiscard]] constexpr inline Type type() const                            {   return internal;    }
         [[nodiscard]] constexpr inline Color color() const                          {   return static_cast<Color>(internal >> 3);   }
+        [[nodiscard]] constexpr inline bool empty() const                           {   return (internal == 0x0);   }
         [[nodiscard]] constexpr inline Piece operator~() const                      {   return Piece(static_cast<Type>(internal ^ 0b1000));    }
         [[nodiscard]] constexpr inline bool operator==(const Piece& other) const    {   return (internal == other.internal);    }
 
