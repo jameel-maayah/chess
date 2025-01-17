@@ -21,4 +21,5 @@ namespace bitboard {
     
 }
 
+void print_bitboard(const U64 bb);
 std::ostream& operator<<(std::ostream& os, const U64& bb) noexcept;

@@ -7,6 +7,7 @@
 #include "constants.h"
 #include "piece.h"
 #include "move.h"
+#include "types.h"
 
 /*
 -zobrist
@@ -19,7 +20,14 @@ class Chess {
         Chess(std::string_view fen = START_FEN);
         ~Chess();
 
+        void make_move(const Move move);
+        void undo_move();
+
+        void pseudo_move(const Move move);
+        void pseudo_undo();
+
         void print();
+        inline Color side_to_move() const { return stm; }
     private:
         Color stm;
         int ply;
