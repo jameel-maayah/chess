@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "types.h"
 
 class Move {
@@ -29,10 +31,14 @@ class Move {
             repr = (flag << 12) | (source << 6) | (target);
         };
 
-        inline Square source()              {   return static_cast<Square>(repr & 0x0FC0);     }
-        inline Square target()              {   return static_cast<Square>(repr & 0x003F);     }
-        inline Flag flag()                  {   return static_cast<Flag>(repr & 0xF000);       }
+        inline Square source() const        {   return static_cast<Square>((repr & 0x0FC0) >> 6);     }
+        inline Square target() const        {   return static_cast<Square>(repr & 0x003F);     }
+        inline Flag flag() const            {   return static_cast<Flag>(repr & 0xF000);       }
         inline void set_flag(Flag flag)     {   repr |= (flag << 12);                          }
 
         // todo: overload < > for move ordering
+
+        explicit operator std::string() const {
+            return "move" + std::to_string(int(source())) + " " + std::to_string(int(target())) + "\n";
+        }
 };
