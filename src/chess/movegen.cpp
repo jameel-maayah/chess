@@ -31,40 +31,39 @@ int perft(Chess *game, int depth) {
     std::vector<Move> moves = generate_moves(game);
 
     for (const Move &move : moves) {
-        U64 wp = game->bitboard[Piece::WHITE_PAWN];
-        U64 bp = game->bitboard[Piece::BLACK_PAWN];
-        U64 wn = game->bitboard[Piece::WHITE_KNIGHT];
-        U64 bn = game->bitboard[Piece::BLACK_KNIGHT];
-        U64 wb = game->bitboard[Piece::WHITE_BISHOP];
-        U64 bb = game->bitboard[Piece::BLACK_BISHOP];
-        U64 wr = game->bitboard[Piece::WHITE_ROOK];
-        U64 br = game->bitboard[Piece::BLACK_ROOK];
-        U64 wq = game->bitboard[Piece::WHITE_QUEEN];
-        U64 bq = game->bitboard[Piece::BLACK_QUEEN];
-        U64 wk = game->bitboard[Piece::WHITE_KING];
-        U64 bk = game->bitboard[Piece::BLACK_KING];
+        U64 wp = game->piece_mask(Piece::WHITE_PAWN);
+        U64 bp = game->piece_mask(Piece::BLACK_PAWN);
+        U64 wn = game->piece_mask(Piece::WHITE_KNIGHT);
+        U64 bn = game->piece_mask(Piece::BLACK_KNIGHT);
+        U64 wb = game->piece_mask(Piece::WHITE_BISHOP);
+        U64 bb = game->piece_mask(Piece::BLACK_BISHOP);
+        U64 wr = game->piece_mask(Piece::WHITE_ROOK);
+        U64 br = game->piece_mask(Piece::BLACK_ROOK);
+        U64 wq = game->piece_mask(Piece::WHITE_QUEEN);
+        U64 bq = game->piece_mask(Piece::BLACK_QUEEN);
+        U64 wk = game->piece_mask(Piece::WHITE_KING);
+        U64 bk = game->piece_mask(Piece::BLACK_KING);
 
-        Piece old[64];
-        memcpy(old, game->board, sizeof(Piece) * 64);
+        //Piece old[64];
+        //memcpy(old, game->board, sizeof(Piece) * 64);
 
         game->make_move(move);
         sum += perft(game, depth-1);
         game->undo_move();
 
-        assert(wp == game->bitboard[Piece::WHITE_PAWN] && "WHITE_PAWN bitboard does not match!");
-        assert(bp == game->bitboard[Piece::BLACK_PAWN] && "BLACK_PAWN bitboard does not match!");
-        assert(wn == game->bitboard[Piece::WHITE_KNIGHT] && "WHITE_KNIGHT bitboard does not match!");
-        assert(bn == game->bitboard[Piece::BLACK_KNIGHT] && "BLACK_KNIGHT bitboard does not match!");
-        assert(wb == game->bitboard[Piece::WHITE_BISHOP] && "WHITE_BISHOP bitboard does not match!");
-        assert(bb == game->bitboard[Piece::BLACK_BISHOP] && "BLACK_BISHOP bitboard does not match!");
-        assert(wr == game->bitboard[Piece::WHITE_ROOK] && "WHITE_ROOK bitboard does not match!");
-        assert(br == game->bitboard[Piece::BLACK_ROOK] && "BLACK_ROOK bitboard does not match!");
-        assert(wq == game->bitboard[Piece::WHITE_QUEEN] && "WHITE_QUEEN bitboard does not match!");
-        assert(bq == game->bitboard[Piece::BLACK_QUEEN] && "BLACK_QUEEN bitboard does not match!");
-        assert(wk == game->bitboard[Piece::WHITE_KING] && "WHITE_KING bitboard does not match!");
-        assert(bk == game->bitboard[Piece::BLACK_KING] && "BLACK_KING bitboard does not match!");
-
-        assert(std::equal(old, old + 64, game->board) && "Boards are not equal!");
+        assert(wp == game->piece_mask(Piece::WHITE_PAWN) && "WHITE_PAWN bitboard does not match!");
+        assert(bp == game->piece_mask(Piece::BLACK_PAWN) && "BLACK_PAWN bitboard does not match!");
+        assert(wn == game->piece_mask(Piece::WHITE_KNIGHT) && "WHITE_KNIGHT bitboard does not match!");
+        assert(bn == game->piece_mask(Piece::BLACK_KNIGHT) && "BLACK_KNIGHT bitboard does not match!");
+        assert(wb == game->piece_mask(Piece::WHITE_BISHOP) && "WHITE_BISHOP bitboard does not match!");
+        assert(bb == game->piece_mask(Piece::BLACK_BISHOP) && "BLACK_BISHOP bitboard does not match!");
+        assert(wr == game->piece_mask(Piece::WHITE_ROOK) && "WHITE_ROOK bitboard does not match!");
+        assert(br == game->piece_mask(Piece::BLACK_ROOK) && "BLACK_ROOK bitboard does not match!");
+        assert(wq == game->piece_mask(Piece::WHITE_QUEEN) && "WHITE_QUEEN bitboard does not match!");
+        assert(bq == game->piece_mask(Piece::BLACK_QUEEN) && "BLACK_QUEEN bitboard does not match!");
+        assert(wk == game->piece_mask(Piece::WHITE_KING) && "WHITE_KING bitboard does not match!");
+        assert(bk == game->piece_mask(Piece::BLACK_KING) && "BLACK_KING bitboard does not match!");
+        //assert(std::equal(old, old + 64, game->board) && "Boards are not equal!");
     }
     return sum;
 }
@@ -85,7 +84,7 @@ int detail_perft(Chess *game, int depth) {
     std::vector<Move> moves = generate_moves(game);
 
     for (const Move &move : moves) {
-        U64 occ = game->occupied();
+        U64 occ = game->occupied_mask();
         
         game->make_move(move);
 
@@ -95,7 +94,7 @@ int detail_perft(Chess *game, int depth) {
 
         game->undo_move();
 
-        assert(game->occupied() == occ);
+        assert(game->occupied_mask() == occ);
     }
     return sum;
 }
@@ -104,11 +103,11 @@ int detail_perft(Chess *game, int depth) {
 void add_to_movelist(Chess *game, vector<Move> &moves, const Move move) {
 
     game->pseudo_move(move);
-    if (game->side_to_move() == BLACK && game->is_attacked(game->white_king)) {
+    if (game->side_to_move() == BLACK && game->is_attacked(game->get_white_king())) {
         game->pseudo_undo();
         return;
     }
-    if (game->side_to_move() == WHITE && game->is_attacked(game->black_king)) {
+    if (game->side_to_move() == WHITE && game->is_attacked(game->get_black_king())) {
         game->pseudo_undo();
         return;
     }
@@ -125,7 +124,7 @@ vector<Move> generate_moves(Chess *game) {
     vector<Move> moves = vector<Move>();
     moves.reserve(MAX_MOVES);
 
-    const U64 occ = game->occupied();
+    const U64 occ = game->occupied_mask();
 
     for (square = a1; square <= h8; ++square) {//todo: iterate through occupied squares only w/bitmask   --- while (occ) square = popLSB(occ)
         piece = game->at(square);

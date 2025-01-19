@@ -296,10 +296,11 @@ void Chess::undo_move() {
     Piece piece = at(target),
           capture = captures[ply]; 
 
-    bitboard::toggle_bit(bitboard[capture.type()], target);
     board[source] = board[target];  
-    bitboard::toggle_bits(bitboard[piece.type()], source, target);
     board[target] = capture;
+
+    bitboard::toggle_bit(bitboard[capture.type()], target);
+    bitboard::toggle_bits(bitboard[piece.type()], source, target);
 
     if (!capture.empty() || piece.type() == Piece::BLACK_PAWN || piece.type() == Piece::WHITE_PAWN) {
         halfmove_counter--;
@@ -339,7 +340,6 @@ void Chess::pseudo_move(const Move move) {
     bitboard::clear_bit(bitboard[capture.type()], target);
     bitboard::toggle_bits(bitboard[piece.type()], source, target);
 
-    
     move_history[ply] = move;
     captures[ply++] = capture;
 
@@ -377,7 +377,7 @@ void Chess::pseudo_undo() {
 
 // later could make this return a bitboard of attackers for check, double check etc
 bool Chess::is_attacked(const Square sq) {
-    const U64 occ = occupied();
+    const U64 occ = occupied_mask();
     const Color victim_color = at(sq).color();
 
     if (victim_color == WHITE) {

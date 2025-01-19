@@ -25,8 +25,17 @@ class Chess {
 
         void pseudo_move(const Move move);
         void pseudo_undo();
+
+        [[nodiscard]] inline int get_ply() const                { return ply; }
+        [[nodiscard]] inline Status get_status() const          { return status; }
+        [[nodiscard]] inline Piece at(const Square sq) const    { return board[sq]; }
+        [[nodiscard]] inline Color side_to_move() const         { return stm; }
+
+        [[nodiscard]] inline Square get_white_king() const      { return white_king; }
+        [[nodiscard]] inline Square get_black_king() const      { return black_king; }
+        [[nodiscard]] bool is_attacked(const Square sq);
         
-        constexpr inline U64 occupied() {
+        [[nodiscard]] constexpr inline U64 occupied_mask() {
             return (bitboard[Piece::WHITE_PAWN] | 
                     bitboard[Piece::WHITE_KNIGHT] | 
                     bitboard[Piece::WHITE_BISHOP] | 
@@ -40,20 +49,32 @@ class Chess {
                     bitboard[Piece::BLACK_QUEEN] | 
                     bitboard[Piece::BLACK_KING]);
         }
-        
-        inline Piece at(const Square sq) const {
-            return board[sq];
+
+        [[nodiscard]] constexpr inline U64 white_mask() {
+            return (bitboard[Piece::WHITE_PAWN] | 
+                    bitboard[Piece::WHITE_KNIGHT] | 
+                    bitboard[Piece::WHITE_BISHOP] | 
+                    bitboard[Piece::WHITE_ROOK] | 
+                    bitboard[Piece::WHITE_QUEEN] | 
+                    bitboard[Piece::WHITE_KING]);
         }
 
-        inline Color side_to_move() const { return stm; }
+        [[nodiscard]] constexpr inline U64 black_mask() {
+            return (bitboard[Piece::BLACK_PAWN] | 
+                    bitboard[Piece::BLACK_KNIGHT] | 
+                    bitboard[Piece::BLACK_BISHOP] | 
+                    bitboard[Piece::BLACK_ROOK] | 
+                    bitboard[Piece::BLACK_QUEEN] | 
+                    bitboard[Piece::BLACK_KING]);
+        }
+
+        [[nodiscard]] constexpr inline U64 piece_mask(const Piece piece) {
+            return bitboard[piece.type()];
+        }
+        
         void print();
         void fancy_print();
-
-
-
-        // private?
-        bool is_attacked(const Square sq) const;
-    //private:
+    private:
         Color stm;
         int ply;
         int fullmoves;
