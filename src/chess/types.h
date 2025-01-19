@@ -44,8 +44,8 @@ enum Rank : int {
     RANK_8
 };
 
-inline Rank& operator++(Rank& rank)     {   return rank = static_cast<Rank>(int(rank) + 1);     }
-inline Rank& operator--(Rank& rank)     {   return rank = static_cast<Rank>(int(rank) - 1);     }
+constexpr inline Rank& operator++(Rank& rank)     {   return rank = static_cast<Rank>(int(rank) + 1);     }
+constexpr inline Rank& operator--(Rank& rank)     {   return rank = static_cast<Rank>(int(rank) - 1);     }
 
 enum Square : int {
     a1 = 0, 
@@ -72,7 +72,7 @@ constexpr inline Rank get_rank(Square sq) {
 }
 
 constexpr inline Rank get_file(Square sq) {
-    return static_cast<Rank>(sq % 8);
+    return static_cast<Rank>(sq % 8); // sq & 7
 }
 
 enum class Direction : int {
@@ -93,7 +93,7 @@ enum class Direction : int {
 constexpr inline Square operator+(Square sq, Direction dir) {   return static_cast<Square>(int(sq) + int(dir));    }
 constexpr inline Square operator-(Square sq, Direction dir) {   return static_cast<Square>(int(sq) - int(dir));    }
 
-inline Square& operator++(Square& sq)                       {   return sq = static_cast<Square>(int(sq) + 1); }
-inline Square& operator--(Square& sq)                       {   return sq = static_cast<Square>(int(sq) - 1); }
-inline Square& operator+=(Square& sq, Direction dir)        {   return sq = sq + dir;   }
-inline Square& operator-=(Square& sq, Direction dir)        {   return sq = sq - dir;   }
+constexpr inline Square& operator++(Square& sq)                       {   return sq = static_cast<Square>(int(sq) + 1); }
+constexpr inline Square& operator--(Square& sq)                       {   return sq = static_cast<Square>(int(sq) - 1); }
+constexpr inline Square& operator+=(Square& sq, Direction dir)        {   return sq = sq + dir;   }
+constexpr inline Square& operator-=(Square& sq, Direction dir)        {   return sq = sq - dir;   }

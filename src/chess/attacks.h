@@ -127,11 +127,11 @@ class Attacks {
                  | get_rank(occ, sq);
         }
 
-        static inline U64 knight_attacks(Square sq) {
+        static constexpr inline U64 knight_attacks(Square sq) {
             return KNIGHT_MASK[static_cast<int>(sq)];
         }
 
-        static inline U64 king_attacks(Square sq) {
+        static constexpr inline U64 king_attacks(Square sq) {
             return KING_MASK[static_cast<int>(sq)];
         }
 
@@ -192,7 +192,7 @@ class Attacks {
 
         static inline U64 get_rank(U64 occ, Square sq) {
             /*
-            unsigned int file = sq &  7;
+            unsigned int file = sq & 7;
             unsigned int rank_x8 = sq & 56;
             unsigned int rank_occ_x2 = (occ >> rank_x8) & 2*63;
             U64 attacks = RANK_MASK[4*rank_occ_x2  + file];

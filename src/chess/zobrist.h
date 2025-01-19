@@ -1,8 +1,13 @@
 #include <stdlib.h>
 
-unsigned long long zobrist_table[64][13];
+unsigned long long zobrist_table[64][16];
 unsigned long long zobrist_stm;
-
 // add castling + EP later
 
-uint64_t prng(uint64_t seed);
+class Zobrist {
+    private:
+        uint64_t prng(uint64_t seed);
+
+    public:
+        void update( /* */ );
+};
