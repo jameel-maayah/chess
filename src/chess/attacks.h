@@ -94,16 +94,16 @@ constexpr std::array<U64, sizeof...(Indices)> precompute_mask(U64 (*func)(int), 
     return {func(Indices)...};
 }
 
-constexpr std::array<U64, 64> DIAG_MASK =           precompute_mask(compute_diag_mask,          std::make_integer_sequence<int, 64>{});
-constexpr std::array<U64, 64> ANTI_DIAG_MASK =      precompute_mask(compute_anti_diag_mask,     std::make_integer_sequence<int, 64>{});
-constexpr std::array<U64, 64> FILE_MASK =           precompute_mask(compute_file_mask,          std::make_integer_sequence<int, 64>{});
-//constexpr std::array<U64, 64> RANK_MASK =           precompute_mask(compute_rank_mask,          std::make_integer_sequence<int, 64>{});
-constexpr std::array<U64, 64> KNIGHT_MASK =         precompute_mask(compute_knight_mask,        std::make_integer_sequence<int, 64>{});
-constexpr std::array<U64, 64> KING_MASK =           precompute_mask(compute_king_mask,          std::make_integer_sequence<int, 64>{});
-//constexpr std::array<U64, 64> PAWN_MASK =         precompute_mask(compute_knight_mask,        std::make_integer_sequence<int, 64>{});
+static constexpr std::array<U64, 64> DIAG_MASK =           precompute_mask(compute_diag_mask,          std::make_integer_sequence<int, 64>{});
+static constexpr std::array<U64, 64> ANTI_DIAG_MASK =      precompute_mask(compute_anti_diag_mask,     std::make_integer_sequence<int, 64>{});
+static constexpr std::array<U64, 64> FILE_MASK =           precompute_mask(compute_file_mask,          std::make_integer_sequence<int, 64>{});
+//static constexpr std::array<U64, 64> RANK_MASK =           precompute_mask(compute_rank_mask,          std::make_integer_sequence<int, 64>{});
+static constexpr std::array<U64, 64> KNIGHT_MASK =         precompute_mask(compute_knight_mask,        std::make_integer_sequence<int, 64>{});
+static constexpr std::array<U64, 64> KING_MASK =           precompute_mask(compute_king_mask,          std::make_integer_sequence<int, 64>{});
+//constexpr std::array<U64, 64> PAWN_MASK =           precompute_mask(compute_pawn_mask,          std::make_integer_sequence<int, 64>{});
 // add pawn masks
 
-constexpr std::array<U64, 64> BIT_MASK =            precompute_mask(compute_bit_mask,           std::make_integer_sequence<int, 64>{});
+static constexpr std::array<U64, 64> BIT_MASK =            precompute_mask(compute_bit_mask,           std::make_integer_sequence<int, 64>{});
 
 
 
@@ -135,9 +135,26 @@ class Attacks {
             return KING_MASK[static_cast<int>(sq)];
         }
 
+        static inline U64 pawn_attacks(U64 occ, Square sq, Color color) { // Add field for EP later
+            /*
+            switch (color) {
+                case WHITE:
+
+                case BLACK:
+
+            }
+            */
+            return 0ULL;
+
+            //write this
+        }
+
     private:
-        static inline U64 get_diagonal(U64 occ, Square sq) {
+        static inline U64 get_diagonal(U64 occ, const Square sq) { 
             U64 forward, reverse;
+            //occ &= ~0xFF818181818181FFULL; // what the hell?
+            bitboard::clear_bit(occ, sq);
+
             forward = occ & DIAG_MASK[static_cast<int>(sq)];
             reverse  = std::byteswap(forward);
             forward -= BIT_MASK[static_cast<int>(sq)];
@@ -147,8 +164,10 @@ class Attacks {
             return forward;
         }
 
-        static inline U64 get_anti_diagonal(U64 occ, Square sq) {
+        static inline U64 get_anti_diagonal(U64 occ, const Square sq) { 
             U64 forward, reverse;
+            bitboard::clear_bit(occ, sq);
+
             forward  = occ & ANTI_DIAG_MASK[static_cast<int>(sq)];
             reverse  = std::byteswap(forward);
             forward -= BIT_MASK[static_cast<int>(sq)];
@@ -158,8 +177,10 @@ class Attacks {
             return forward;
         }
 
-        static inline U64 get_file(U64 occ, Square sq) {
+        static inline U64 get_file(U64 occ, const Square sq) { 
             U64 forward, reverse;
+            bitboard::clear_bit(occ, sq);
+            
             forward  = occ & FILE_MASK[static_cast<int>(sq)];
             reverse  = std::byteswap(forward);
             forward -= BIT_MASK[static_cast<int>(sq)];
@@ -178,7 +199,24 @@ class Attacks {
             return attacks << rank_x8;
             */
 
-            // todo: make this work
-            return 0ULL;
+            // find a faster way
+            U64 attacks = 0ULL;
+            occ |= 0x8181818181818181ULL;
+
+            if (::get_file(sq) != A_FILE) {
+                for (Square dest = sq + Direction::W; ; dest += Direction::W) {
+                    bitboard::set_bit(attacks, dest);
+                    if (bitboard::get_bit(occ, dest)) break;
+                }
+            }
+
+            if (::get_file(sq) != H_FILE) {
+                for (Square dest = sq + Direction::E; ; dest += Direction::E) {
+                    bitboard::set_bit(attacks, dest);
+                    if (bitboard::get_bit(occ, dest)) break;
+                }
+            }
+
+            return attacks;
         }
 };

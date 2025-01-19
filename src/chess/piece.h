@@ -6,7 +6,7 @@
 
 class Piece {
     public:
-        enum Type : uint8_t {
+        enum Type : uint8_t { // todo: store colorless pieces and let bit 4 represent color
             EMPTY = 0b0000,
 
             WHITE_PAWN = 0b0001,
@@ -36,7 +36,7 @@ class Piece {
         explicit operator std::string() const {
             switch (internal) {
                 case WHITE_PAWN: return "P";
-                case WHITE_KNIGHT: return "K";
+                case WHITE_KNIGHT: return "N";
                 case WHITE_BISHOP: return "B";
                 case WHITE_ROOK: return "R";
                 case WHITE_QUEEN: return "Q";
