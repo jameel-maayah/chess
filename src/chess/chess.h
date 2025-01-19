@@ -41,19 +41,25 @@ class Chess {
                     bitboard[Piece::BLACK_KING]);
         }
         
-        inline Piece at(Square sq) {
+        inline Piece at(const Square sq) const {
             return board[sq];
         }
 
         inline Color side_to_move() const { return stm; }
         void print();
+        void fancy_print();
+
+
+
+        // private?
+        bool is_attacked(const Square sq) const;
     //private:
         Color stm;
         int ply;
         int fullmoves;
 
         Piece board[NUM_SQUARES];
-        U64 bitboard[16];
+        U64 bitboard[16]; //NUM_PIECES
 
         Square white_king, black_king;
 
