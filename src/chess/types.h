@@ -76,6 +76,17 @@ constexpr inline Rank get_file(Square sq) {
 }
 
 enum class Direction : int {
+/*
+a8                  h8
+
+    +7    +8    +9
+        \  |  /
+    -1 <-  0 -> +1  
+        /  |  \
+    -9    -8    -7
+
+a1                  h1
+*/
     N = 8,
     NE = 9,
     E = 1,
