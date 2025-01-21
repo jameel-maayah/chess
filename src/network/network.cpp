@@ -87,3 +87,5 @@ void test_inference_speed(int batch_size, int seconds) {
     }
     std::cout << i / seconds << "inferences/sec, batch size " << batch_size << ", " << batch_size * i / seconds << " nodes/s" << std::endl;
 }
+
+int main() {}
