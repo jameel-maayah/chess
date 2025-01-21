@@ -302,7 +302,9 @@ void Chess::undo_move() {
     bitboard::toggle_bit(bitboard[capture.type()], target);
     bitboard::toggle_bits(bitboard[piece.type()], source, target);
 
-    if (!capture.empty() || piece.type() == Piece::BLACK_PAWN || piece.type() == Piece::WHITE_PAWN) {
+    if (!capture.empty() || 
+        piece.type() == Piece::BLACK_PAWN || 
+        piece.type() == Piece::WHITE_PAWN) {
         halfmove_counter--;
     } else {
         halfmove_stack[halfmove_counter]--;
