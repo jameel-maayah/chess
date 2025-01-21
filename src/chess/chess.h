@@ -20,6 +20,9 @@ class Chess {
         Chess(std::string_view fen = START_FEN);
         ~Chess();
 
+        using Move = ::Move;
+        using Color = ::Color;
+
         void make_move(const Move move);
         void undo_move();
 
