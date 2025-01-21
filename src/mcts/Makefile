@@ -9,11 +9,16 @@ LDFLAGS = $(CHESS_LIB)
 
 EXEC = montecarlo
 
-$(EXEC): montecarlo.o
-	$(CC) $(CFLAGS) -o $(EXEC) montecarlo.o $(LDFLAGS)
+$(EXEC): montecarlo.o node.o tree.o
+	$(CC) $(CFLAGS) -o $(EXEC) montecarlo.o node.o tree.o $(LDFLAGS)
 
-montecarlo.o: montecarlo.cpp montecarlo.h
+montecarlo.o: montecarlo.cpp montecarlo.h tree.h node.h
 	$(CC) $(CFLAGS) $(CHESS_INCLUDE) -c montecarlo.cpp -o montecarlo.o
+
+node.o: node.cpp node.h
+	$(CC) $(CFLAGS) $(CHESS_INCLUDE) -c node.cpp -o node.o
+tree.o: tree.cpp tree.h
+	$(CC) $(CFLAGS) $(CHESS_INCLUDE) -c tree.cpp -o tree.o
 
 clean:
 	rm -f *.o $(EXEC)
