@@ -37,86 +37,17 @@ public:
         }
     }
 
-    bool fully_expanded() {
-        return num_children != -1;
-    }
+    void expand(GameType *game);
+    bool fully_expanded() const { return num_children != -1; }
 
-    void expand(GameType *game) {
-        std::vector<Move> moves = generate_moves(game); // abstract this
+    Node *best_uct() const;
 
-        if (moves.size()) {
-            children.reserve(moves.size());
-            num_children = moves.size();
-
-            for (const Move &move : moves) {
-                children.push_back(new Node(this, move, ~color));
-            }
-        } else {
-            num_children = 0;
-        }
-    }
-
-    Node *best_uct() {
-        std::cout << "finding best uct\n";
-
-        Node *best = children[rand() % num_children];
-        double max_score = -INFINITY;
-
-        for (int i = 0; i < num_children; i++) {
-            double score = children[i]->uct_score();//puct_score(game, children[i]);//root->visits); //(node->parent) ? node->parent->visits : root->visits
-            std::cout << "score " << score << "\n";
-
-            if (score > max_score) {
-                max_score = score;
-                best = children[i];   
-            }
-        }
-        return best;
-    }
-
-    /*
-    double puct_score() {
-        if (visits == 0) {
-            if (!parent->parent) {
-                return INFINITY;
-            } else {
-                return parent->value / parent->visits * ((color == WHITE) ? 1 : -1) + // exploitation
-                ((parent) ? CPUCT : ROOT_CPUCT) * sqrt(parent->visits) / (visits + 1) * prob; // exploration
-            }
-        }
-        return (value / visits) * ((color == WHITE) ? 1 : -1) + // exploitation
-            ((parent) ? CPUCT : ROOT_CPUCT) * sqrt(parent->visits) / (visits + 1) * prob; // exploration
-        //sqrt(2 * log(node->parent->visits) / node->visits) *
-        //node->prob;
-    }
-    */
-
-    double uct_score() {
-        if (visits == 0) {
-            if (!parent->parent) {
-                return INFINITY;
-            } else {
-                return parent->value / parent->visits * ((color == WHITE) ? 1 : -1) + // exploitation
-                ((parent) ? CPUCT : ROOT_CPUCT) * sqrt(parent->visits) / (visits + 1);//* prob; // exploration
-            }
-        }
-        return (value / visits) * ((color == WHITE) ? 1 : -1) + // exploitation
-            ((parent) ? CPUCT : ROOT_CPUCT) * sqrt(parent->visits) / (visits + 1);// * prob; // exploration
-        //sqrt(2 * log(node->parent->visits) / node->visits) *
-        //node->prob;
-    }
+    // move these to score.h ?
+    double uct_score() const;
+    double puct_score() const;
 
 
-    void print_subtree(int depth) const {
-        if (!visits) return;
-        //if (node->value > 0 && node->parent) m
-        for (int i = 0; i < depth; i++) printf(i == depth - 1 ? "╰━━━━━>" : "       "); //"⤷"
-        std::cout << std::format("{}: Visits={} Value={:.2f} Q={:.2f} Children={}", std::string(move), visits, value, Q(), num_children) << std::endl;
-
-        for (const Node *child : children) {
-            child->print_subtree(depth + 1);
-        }
-    }
+    void print_subtree(int depth) const;
     
     
     inline int get_visits() const { return visits; }
@@ -131,18 +62,18 @@ public:
     //void set_prob(double prob_val) { prob = prob_val; }
     //void set_ready(bool ready) { is_ready = ready; }
 
-    std::vector<Node*>& get_children() { return children; }
-
+    // make private
 //private:
     int visits;
     double value;
-    //double prob;
+
     Move move;
     Color color;
-    //int policy_index;
+
+    double prob;
+    int policy_index;
 
     //bool is_ready;
-    //bool is_white;
 
     Node* parent;
     std::vector<Node*> children;
