@@ -11,9 +11,17 @@ LDFLAGS = -Wl,-rpath,$(LIBTORCH_DIR)/lib
 CFLAGS += -I$(LIBTORCH_DIR)/include -I$(LIBTORCH_DIR)/include/torch/csrc/api/include
 LDFLAGS += -L$(LIBTORCH_DIR)/lib -ltorch -ltorch_cpu -lc10
 
-network: network.o
+OBJS = network.o
+LIB = netlib.a
+
+all: $(LIB)
+
+$(LIB): $(OBJS)
+	ar rcs $(LIB) $(OBJS)
+
+#network: network.o
 network.o: network.cpp network.h
 	$(CC) $(CFLAGS) -c network.cpp -o network.o
 
 clean:
-	rm -f *.o
+	rm -f $(OBJS) $(LIB)

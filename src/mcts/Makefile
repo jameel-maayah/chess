@@ -7,7 +7,14 @@ CHESS_INCLUDE = -I$(CHESS_DIR)
 
 LDFLAGS = $(CHESS_LIB)
 
+OBJS = tree.o node.o
+LIB = mctslib.a
 EXEC = montecarlo
+
+all: $(LIB)
+
+$(LIB): $(OBJS)
+	ar rcs $(LIB) $(OBJS)
 
 $(EXEC): montecarlo.o node.o tree.o
 	$(CC) $(CFLAGS) -o $(EXEC) montecarlo.o node.o tree.o $(LDFLAGS)
@@ -21,4 +28,4 @@ tree.o: tree.cpp tree.h
 	$(CC) $(CFLAGS) $(CHESS_INCLUDE) -c tree.cpp -o tree.o
 
 clean:
-	rm -f *.o $(EXEC)
+	rm -f $(OBJS) $(LIB) $(EXEC)
