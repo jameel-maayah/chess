@@ -465,14 +465,24 @@ void Chess::print() {
     //printf("ply %d, status %d, hash %d, lastmove %s\n", ply, status, zobrist_hash, 
     std::cout << ply << " " << status << " " << std::to_string(zobrist_hash) << " " << std::string(move_history[ply-1]) << std::endl;
 
+    /*
     // todo: stop printing board upside down
     for (Square sq = a1; sq < NULL_SQ; ++sq) {
         std::cout << std::string(board[sq]);
         if (int(sq+1) % 8 == 0) std::cout << std::endl;
     }
+    */
+
+    for (int rank = 7; rank >= 0; --rank) {
+        for (int file = 0; file < 8; ++file) {
+            Square sq = static_cast<Square>(rank * 8 + file);
+            std::cout << std::string(board[sq]);
+        }
+        std::cout << std::endl;
+    }
     // todo: ascii piece representations
 }
 
 void Chess::fancy_print() {
-
+    
 }

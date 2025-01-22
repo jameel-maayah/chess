@@ -1,21 +1,11 @@
 #include "node.h"
 #include "tree.h"
 
-template <typename GameType>
-MCTree<GameType>::MCTree(const GameType& game)
-    : game(game),
-      root(std::make_unique<Node>(nullptr, typename GameType::Move(), typename GameType::Color())) {}
 
-template <typename GameType>
-MCTree<GameType>::~MCTree() { }
 
 template <typename GameType>
 Node<GameType> *MCTree<GameType>::traverse(Node *node) {
-    std::cout << "traversing\n";
-
     while (node->fully_expanded()) {
-        std::cout << "layer\n";
-
         node = node->best_uct();
         game.make_move(node->move);
 
