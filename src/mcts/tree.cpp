@@ -5,8 +5,10 @@
 
 template <typename GameType>
 Node<GameType> *MCTree<GameType>::traverse() {
-    Node *node = root;
-    
+    std::cout << "traversing\n";
+
+    Node *node = root.get();
+
     while (node->fully_expanded()) {
         node = node->best_uct();
         game.make_move(node->move);

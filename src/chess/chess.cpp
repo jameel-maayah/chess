@@ -23,7 +23,7 @@ Chess::Chess(std::string_view fen) {
 
     for (const auto& arg : args) {
         std::string token(arg.begin(), arg.end()); 
-        std::cout << token << std::endl;
+        //std::cout << token << std::endl;
     }
     // todo: fen parsing
 
