@@ -9,10 +9,10 @@ public:
      : size(size), internal((size + 63) / 64, 0) {}
     ~BitField() {}
 
-    constexpr inline void set(size_t index)                       {   internal[index / 64] |= (1ULL << (index % 64));         }
-    constexpr inline bool operator[](size_t index) const  {   return (internal[index / 64] &  (1ULL << (index % 64))) != 0;   }
+    inline void set(size_t index)                       {   internal[index / 64] |= (1ULL << (index % 64));         }
+    inline bool operator[](size_t index) const  {   return (internal[index / 64] &  (1ULL << (index % 64))) != 0;   }
 
-    constexpr inline void fill() {
+    inline void fill() {
         for (size_t chunk = 0; chunk < internal.size(); ++chunk) {
             internal[chunk] = std::numeric_limits<uint64_t>::max();
         }
@@ -21,13 +21,13 @@ public:
         }
     }
 
-    constexpr inline void clear() {
+    inline void clear() {
         for (size_t chunk = 0; chunk < internal.size(); ++chunk) {
             internal[chunk] = 0;
         }
     }
 
-    constexpr inline size_t get_first() const {
+    inline size_t get_first() const {
         for (size_t chunk = 0; chunk < internal.size(); chunk++) {
             if (internal[chunk]) {
                 return chunk * 64 + __builtin_ctzll(internal[chunk]);
