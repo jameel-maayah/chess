@@ -11,7 +11,7 @@ Both of which are used during search to probe the game tree and prune suboptimal
 ***
 # Structure
 ```\n.\n
-|-chess				#	A shabby chess implementation with bitboards
+|-chess				#	A shabby chess implementation using bitboards
 |-network			#	Where the magic happens
 |-mcts				#	Tree stuff
 |-selfplay			#	Currently being heavily refactored
@@ -19,7 +19,7 @@ Both of which are used during search to probe the game tree and prune suboptimal
 ***
 
 Todo:
-- Rewrite threaded selfplay
+- Rewrite threaded selfplay, separate threads for preprocessing and inference dispatching
 - Condense training data
 - Bigger net
 - Add promotions, castling, and en passant
