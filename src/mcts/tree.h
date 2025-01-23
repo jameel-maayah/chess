@@ -20,7 +20,8 @@ public:
     ~MCTree() { /* delete game ? */}
 
     Node *get_root() const { return root.get(); }
-    Node *traverse(Node *node);
+    Node *traverse();
+
     void backpropagate(Node* leaf, double value);
 
     Node *best_child();

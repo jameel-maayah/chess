@@ -4,7 +4,9 @@
 
 
 template <typename GameType>
-Node<GameType> *MCTree<GameType>::traverse(Node *node) {
+Node<GameType> *MCTree<GameType>::traverse() {
+    Node *node = root;
+    
     while (node->fully_expanded()) {
         node = node->best_uct();
         game.make_move(node->move);

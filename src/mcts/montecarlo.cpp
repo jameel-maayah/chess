@@ -66,7 +66,7 @@ int main() {
 
     //tree.traverse(tree.get_root());
     for (int i = 0; i < 8000; i++) {
-        tree.backpropagate(tree.traverse(tree.get_root()), (double) count_material(game) / 200);
+        tree.backpropagate(tree.traverse(), (double) count_material(game) / 200);
     }
 
     tree.print();
