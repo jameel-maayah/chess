@@ -1,8 +1,6 @@
 #include "node.h"
 #include "tree.h"
 
-
-
 template <typename GameType>
 Node<GameType> *MCTree<GameType>::traverse() {
     Node *node = root;
