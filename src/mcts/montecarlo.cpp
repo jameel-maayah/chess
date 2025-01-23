@@ -18,7 +18,7 @@ int main() {
 
     //tree.traverse(tree.get_root());
     for (int i = 0; i < 8000; i++) {
-        tree.backpropagate(tree.traverse(tree.get_root()), .1);
+        tree.backpropagate(tree.traverse(), .1);
     }
 
     tree.print();

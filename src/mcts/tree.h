@@ -17,7 +17,7 @@ public:
     ~MCTree();
 
     Node* get_root() const { return root.get(); }
-    Node* traverse(Node *node);
+    Node* traverse();
     void backpropagate(Node* leaf, double value);
     void make_move(const Move move);
 

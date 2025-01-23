@@ -10,8 +10,10 @@ template <typename GameType>
 MCTree<GameType>::~MCTree() { }
 
 template <typename GameType>
-Node<GameType> *MCTree<GameType>::traverse(Node *node) {
+Node<GameType> *MCTree<GameType>::traverse() {
     std::cout << "traversing\n";
+
+    Node *node = root;
 
     while (node->fully_expanded()) {
         std::cout << "layer\n";
