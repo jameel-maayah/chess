@@ -13,14 +13,15 @@ Both of which are used during search to probe the game tree and prune suboptimal
 ```\n.\n
 |-chess				#	A shabby chess implementation using bitboards
 |-network			#	Where the magic happens
-|-mcts				#	Tree stuff
-|-selfplay			#	Currently being heavily refactored
+|-mcts				#	Monte Carlo tree search
+|-selfplay			#	Multithreaded data generation, currently being heavily refactored
 ```
 ***
 
 Todo:
 - Rewrite threaded selfplay, separate threads for preprocessing and inference dispatching
 - Condense training data
+- LRU cache instead of dynamic node allocation
 - Bigger net
 - Add promotions, castling, and en passant
 
