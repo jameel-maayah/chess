@@ -40,11 +40,11 @@ double Node<GameType>::uct_score() const {
         } else {
             // FPU = Q(parent) + exploration term
             return parent->value / parent->visits * ((color == WHITE) ? 1 : -1) + // exploitation
-            ((parent) ? CPUCT : ROOT_CPUCT) * sqrt(parent->visits) / (visits + 1);//* prob; // exploration
+            ((parent) ? CPUCT : ROOT_CPUCT) * sqrt(parent->visits) / (visits + 1); // exploration
         }
     }
     return (value / visits) * ((color == WHITE) ? 1 : -1) + // exploitation
-        ((parent) ? CPUCT : ROOT_CPUCT) * sqrt(parent->visits) / (visits + 1);// * prob; // exploration
+        ((parent) ? CPUCT : ROOT_CPUCT) * sqrt(parent->visits) / (visits + 1); // exploration
 }
 
 template <typename GameType>
