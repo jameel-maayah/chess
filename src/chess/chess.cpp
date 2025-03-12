@@ -6,6 +6,9 @@
 
 #include <vector>
 
+#include <wchar.h>
+#include <locale.h>
+
 #include "chess.h"
 #include "bitboard.h"
 #include "constants.h"
@@ -484,5 +487,86 @@ void Chess::print() {
 }
 
 void Chess::fancy_print() {
-    
+    using std::cout;
+
+    setlocale(LC_ALL, "");
+    fwide(stdout, 1);
+
+    //std::cout << ply << " " << status << " " << std::to_string(zobrist_hash) << " " << std::string(move_history[ply-1]) << std::endl;
+
+    cout << "╭❖✤⚜━❃━❇━❃━❇━━❇━❃━❇━❃━⚜✤❖╮\n";
+
+    for (int rank = 7; rank >= 0; --rank) {
+        //printf("\033[0;37m");
+        cout << "\033[0m";
+        cout << rank + 1;
+
+
+        for (int file = 0; file < 8; ++file) {
+            Square sq = static_cast<Square>(rank * 8 + file);
+            
+            cout << "\033[0m";
+
+            if ((rank + file) % 2 == 0) {
+                cout << "\033[48;5;143m";//"\033[48;5;64m";//"\033[48;5;58m";//"\033[48;5;52m";
+            } else {
+                cout << "\033[47m";//"\033[48;5;245m";
+            }
+
+            if (!at(sq).empty()) {
+                Piece piece = at(sq);
+
+                if (piece.color() == WHITE) {
+                    cout << "\033[38;5;136m";//"\033[38;5;220m";//"\033[38;5;222m";
+                } else {
+                    cout << "\033[38;5;94m";//"\033[116;58;52m";//"\033[38;5;52m";//"\033[38;5;94m";
+                }
+
+                wchar_t wc;
+
+                switch (piece.type()) {
+                    case Piece::WHITE_PAWN: wc = L'♟'; break;
+                    case Piece::WHITE_KNIGHT: wc = L'♞'; break;
+                    case Piece::WHITE_BISHOP: wc = L'♝'; break;
+                    case Piece::WHITE_ROOK: wc = L'♜'; break;
+                    case Piece::WHITE_QUEEN: wc = L'♛'; break;
+                    case Piece::WHITE_KING: wc = L'♚'; break;
+                    case Piece::BLACK_PAWN: wc = L'♟'; break;
+                    case Piece::BLACK_KNIGHT: wc = L'♞'; break;
+                    case Piece::BLACK_BISHOP: wc = L'♝'; break;
+                    case Piece::BLACK_ROOK: wc = L'♜'; break;
+                    case Piece::BLACK_QUEEN: wc = L'♛'; break;
+                    case Piece::BLACK_KING: wc = L'♚'; break;
+                    case Piece::EMPTY: wc = L'.'; break;
+                }
+
+                if (ply && move_history[ply - 1].target() == sq) {
+                    //cout << "\033[5m ";
+                    cout << "\033[0m\033[42m ";
+                    fputwc(wc, stdout);
+                    cout << "\033[42m ";
+                    //cout << " \033[0m";
+                } else {
+                    cout << " ";
+                    fputwc(wc, stdout);
+                    cout << " ";
+                }
+            } else {
+                if (ply && move_history[ply - 1].source() == sq) {
+                    cout << "\033[0m";
+                    cout << "\033[42m";
+                }
+                cout << "   ";
+            }
+
+        }
+
+        cout << "\033[49m";
+        //printf("\033[0;37m");
+        cout << "\033[0m";
+        cout << rank + 1 << std::endl;
+    }
+
+    cout << "\033[3m╰❇a❇✤b✤❃c❃✤d✤✤e✤❃f❃✤g✤❇h❇╯\033[0m\n";
+    cout << "\e[0;32m\n";
 }

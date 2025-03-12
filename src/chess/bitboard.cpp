@@ -7,7 +7,7 @@
 #include "bitboard.h"
 #include "types.h"
 
-namespace bitboard {// rewrite as class instead of namespace?    
+namespace bitboard { // Rewrite as class instead of namespace?    
     [[nodiscard]] inline Square popLSB(U64 &bb) {
         int rshift = __builtin_ctzll(bb);
         bb &= bb - 1;
@@ -26,16 +26,6 @@ std::ostream& operator<<(std::ostream& os, const U64& bb) noexcept {
 }
 
 void print_bitboard(const U64 bb) {
-    /*
-    for (int j = 0; j < 8; j++) {
-        for (int i = 7; i >= 0; i--) {
-            std::cout << (bitboard::get_bit(bb, 8 * i + j) ? 1 : 0) << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-    */
-
     std::cout << std::endl;
 
     std::cout << bitboard::get_bit(bb, a8) << " ";
@@ -117,5 +107,4 @@ void print_bitboard(const U64 bb) {
     std::cout << bitboard::get_bit(bb, g1) << " ";
     std::cout << bitboard::get_bit(bb, h1) << " ";
     std::cout << std::endl;
-
 }

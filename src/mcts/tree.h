@@ -10,15 +10,25 @@ public:
 
 private:
     std::unique_ptr<Node> root;
-    GameType &game;
+    GameType *game;
 
 public:
+    MCTree()
+    : game(nullptr),
+      root(nullptr) {}
     MCTree(GameType& game) 
-    : game(game),
+    : game(&game),
       root(std::make_unique<Node>(nullptr, typename GameType::Move(), typename GameType::Color())) 
-      { root->color = ~game.side_to_move(); }
+    { 
+        root->color = ~game.side_to_move(); 
+    }
     ~MCTree() { /* delete game ? */}
 
+    void init_root(GameType& game) {
+        this->game = &game;
+        root = std::make_unique<Node>(nullptr, typename GameType::Move(), typename GameType::Color());
+        root->color = ~game.side_to_move(); 
+    }
     Node *get_root() const { return root.get(); }
     Node *traverse();
 

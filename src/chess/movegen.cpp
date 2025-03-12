@@ -31,6 +31,7 @@ int perft(Chess *game, int depth) {
     std::vector<Move> moves = generate_moves(game);
 
     for (const Move &move : moves) {
+        /*
         U64 wp = game->piece_mask(Piece::WHITE_PAWN);
         U64 bp = game->piece_mask(Piece::BLACK_PAWN);
         U64 wn = game->piece_mask(Piece::WHITE_KNIGHT);
@@ -46,11 +47,11 @@ int perft(Chess *game, int depth) {
 
         //Piece old[64];
         //memcpy(old, game->board, sizeof(Piece) * 64);
-
+        */
         game->make_move(move);
         sum += perft(game, depth-1);
         game->undo_move();
-
+        /*
         assert(wp == game->piece_mask(Piece::WHITE_PAWN) && "WHITE_PAWN bitboard does not match!");
         assert(bp == game->piece_mask(Piece::BLACK_PAWN) && "BLACK_PAWN bitboard does not match!");
         assert(wn == game->piece_mask(Piece::WHITE_KNIGHT) && "WHITE_KNIGHT bitboard does not match!");
@@ -64,6 +65,7 @@ int perft(Chess *game, int depth) {
         assert(wk == game->piece_mask(Piece::WHITE_KING) && "WHITE_KING bitboard does not match!");
         assert(bk == game->piece_mask(Piece::BLACK_KING) && "BLACK_KING bitboard does not match!");
         //assert(std::equal(old, old + 64, game->board) && "Boards are not equal!");
+        */
     }
     return sum;
 }

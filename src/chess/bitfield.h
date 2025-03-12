@@ -9,7 +9,8 @@ public:
      : size(size), internal((size + 63) / 64, 0) {}
     ~BitField() {}
 
-    inline void set(size_t index)                       {   internal[index / 64] |= (1ULL << (index % 64));         }
+    inline void set_bit(size_t index)                   {   internal[index / 64] |= (1ULL << (index % 64));         }
+    inline void clear_bit(size_t index)                 {   internal[index / 64] &= ~(1ULL << (index % 64));        }
     inline bool operator[](size_t index) const  {   return (internal[index / 64] &  (1ULL << (index % 64))) != 0;   }
 
     inline void fill() {

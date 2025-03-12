@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -arch arm64 -Wall -std=c++23 -target arm64-apple-macos -march=armv8.2-a -O3 -pthread
+CFLAGS = -arch arm64 -Wall -std=c++23 -target arm64-apple-macos -march=armv8.2-a -O3 -pthread -flto
 
 CHESS_DIR = ../chess
 CHESS_LIB = $(CHESS_DIR)/chesslib.a
@@ -15,6 +15,12 @@ NN_INCLUDE = -I$(NN_DIR)
 
 LDFLAGS = $(CHESS_LIB) $(MCTS_LIB) $(NN_LIB)
 INCLUDES = $(CHESS_INCLUDE) $(MCTS_INCLUDE) $(NN_INCLUDE)
+
+LIBTORCH_DIR = /opt/homebrew/Cellar/pytorch/2.5.1_1
+
+LDFLAGS += -L$(LIBTORCH_DIR)/lib -ltorch -ltorch_cpu -lc10
+CFLAGS += -I$(LIBTORCH_DIR)/include -I$(LIBTORCH_DIR)/include/torch/csrc/api/include
+
 
 EXEC = selfplay
 SRCS = train.cpp
