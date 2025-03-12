@@ -51,6 +51,24 @@ class Piece {
             }
         }
 
+        explicit operator std::wstring() const {
+            switch (internal) {
+                case WHITE_PAWN: return L"♟";
+                case WHITE_KNIGHT: return L"♞";
+                case WHITE_BISHOP: return L"♝";
+                case WHITE_ROOK: return L"♜";
+                case WHITE_QUEEN: return L"♛";
+                case WHITE_KING: return L"♚";
+                case BLACK_PAWN: return L"♟";
+                case BLACK_KNIGHT: return L"♞";
+                case BLACK_BISHOP: return L"♝";
+                case BLACK_ROOK: return L"♜";
+                case BLACK_QUEEN: return L"♛";
+                case BLACK_KING: return L"♚";
+                case EMPTY: return L".";
+            }
+        }
+
     private:
         Type internal;
 };

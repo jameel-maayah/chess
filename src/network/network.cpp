@@ -12,7 +12,7 @@
 
 ChessNet model;
 
-// dummy net for testing
+// Dummy net for testing
 ChessNetImpl::ChessNetImpl() {
     const int filters = 64;
     const int num_blocks = 6;
@@ -87,5 +87,3 @@ void test_inference_speed(int batch_size, int seconds) {
     }
     std::cout << i / seconds << "inferences/sec, batch size " << batch_size << ", " << batch_size * i / seconds << " nodes/s" << std::endl;
 }
-
-int main() {}

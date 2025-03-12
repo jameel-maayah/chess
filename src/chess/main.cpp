@@ -11,11 +11,21 @@
 
 
 int main() {
-    std::cout << Move(e2, e4).source() << " " << Move(e2, e4).target() << "\n"; print_bitboard(0x8181818181818181ULL);
+    //std::cout << Move(e2, e4).source() << " " << Move(e2, e4).target() << "\n"; print_bitboard(0x8181818181818181ULL);
     const Move variation[7] = { Move(e2, e4), Move(e7, e5), Move(d1, f3), Move(a7, a5), Move(f1, c4), Move(a5, a4), Move(f3, f7) };
 
     std::string_view fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    Chess game(fen); game.print();
+    Chess game(fen);
+    game.fancy_print();
+
+    /*
+    while (!game.get_status()) { 
+        std::vector<Move> moves = generate_moves(&game);
+        game.make_move(moves[rand() % moves.size()]);
+        game.fancy_print();
+    }
+    */
+
     /* 
     game.make_move(Move(f3, f4)); 
     game.make_move(Move(c7, c6));
@@ -24,13 +34,13 @@ int main() {
     std::cout << game.is_attacked(game.white_king); exit(1);
     */
 
-    std::vector<Move> moves = generate_moves(&game);
+    //std::vector<Move> moves = generate_moves(&game);
     
-    std::cout << moves.size() << " moves\n";
+    //std::cout << moves.size() << " moves\n";
 
-    for (const Move &m: moves) {
-        std::cout << std::string(m) << std::endl;
-    }
+    //for (const Move &m: moves) {
+    //    std::cout << std::string(m) << std::endl;
+    //}
     
     std::cout << "perft\n";
     /*

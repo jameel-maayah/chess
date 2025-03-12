@@ -11,8 +11,8 @@
 
 #define ROOT_PST 1.2
 #define PST 1.1
-#define ROOT_CPUCT 4//4
-#define CPUCT 2.5//3.5
+#define ROOT_CPUCT 4
+#define CPUCT 2.5
 
 
 
@@ -21,12 +21,15 @@ class Node {
 public:
     using Move = typename GameType::Move;
     using Color = typename GameType::Color;
+    using Status = typename GameType::Status;
 
     Node(Node* parent, Move move, Color color)
         : visits(0),
           value(0.0f),
           move(move),
-          //policy_index(-1),
+          policy_index(-1),
+          is_ready(false),
+          terminal_status(IN_PROGRESS),
           color(color),
           num_children(-1),
           parent(parent) {}
@@ -38,7 +41,9 @@ public:
     }
 
     void expand(GameType *game);
-    bool fully_expanded() const { return num_children != -1; }
+    inline bool fully_expanded() const { return num_children != -1; }
+    inline bool is_terminal() const { return terminal_status; }
+    inline void set_terminal(Status status) { terminal_status = status; }
 
     Node *best_uct() const;
 
@@ -73,7 +78,8 @@ public:
     double prob;
     int policy_index;
 
-    //bool is_ready;
+    bool is_ready;
+    Status terminal_status;
 
     Node* parent;
     std::vector<Node*> children;

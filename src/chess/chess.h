@@ -22,6 +22,7 @@ class Chess {
 
         using Move = ::Move;
         using Color = ::Color;
+        using Status = ::Status;
 
         void make_move(const Move move);
         void undo_move();
@@ -38,7 +39,7 @@ class Chess {
         [[nodiscard]] inline Square get_black_king() const      { return black_king; }
         [[nodiscard]] bool is_attacked(const Square sq);
         
-        [[nodiscard]] constexpr inline U64 occupied_mask() {
+        [[nodiscard]] inline U64 occupied_mask() const {
             return (bitboard[Piece::WHITE_PAWN] | 
                     bitboard[Piece::WHITE_KNIGHT] | 
                     bitboard[Piece::WHITE_BISHOP] | 
@@ -53,7 +54,7 @@ class Chess {
                     bitboard[Piece::BLACK_KING]);
         }
 
-        [[nodiscard]] constexpr inline U64 white_mask() {
+        [[nodiscard]] inline U64 white_mask() const {
             return (bitboard[Piece::WHITE_PAWN] | 
                     bitboard[Piece::WHITE_KNIGHT] | 
                     bitboard[Piece::WHITE_BISHOP] | 
@@ -62,7 +63,7 @@ class Chess {
                     bitboard[Piece::WHITE_KING]);
         }
 
-        [[nodiscard]] constexpr inline U64 black_mask() {
+        [[nodiscard]] inline U64 black_mask() const {
             return (bitboard[Piece::BLACK_PAWN] | 
                     bitboard[Piece::BLACK_KNIGHT] | 
                     bitboard[Piece::BLACK_BISHOP] | 
@@ -71,7 +72,7 @@ class Chess {
                     bitboard[Piece::BLACK_KING]);
         }
 
-        [[nodiscard]] constexpr inline U64 piece_mask(const Piece piece) {
+        [[nodiscard]] inline U64 piece_mask(const Piece piece) const {
             return bitboard[piece.type()];
         }
         

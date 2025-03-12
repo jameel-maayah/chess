@@ -5,16 +5,17 @@
 
 template <typename GameType>
 Node<GameType> *MCTree<GameType>::traverse() {
-    std::cout << "traversing\n";
-
     Node *node = root.get();
 
     while (node->fully_expanded()) {
         node = node->best_uct();
-        game.make_move(node->move);
+        std::cout << node << std::endl;
+        game->make_move(node->move);
 
-        if (game.get_status()) {
-            switch (game.get_status()) {
+        if (game->get_status()) {
+            node->set_terminal(game->get_status());
+
+            switch (game->get_status()) {
                 case WIN_WHITE:
                     node->value += 1.0f;
                     break;
@@ -24,19 +25,16 @@ Node<GameType> *MCTree<GameType>::traverse() {
                     
                 default:
                     break;
-                //case DRAW: 
-                //    //node->value = 0.0f;
-                //    break;
             }
             node->num_children = 0;
-            //node->is_ready = true;
+            node->is_ready = true;
+
             break;
         }
     }
 
     if (node->num_children == -1) {
-        node->expand(&game);
-        //expand_with_inference(game, node);
+        node->expand(game);
     } 
     return node;
 }
@@ -48,7 +46,7 @@ void MCTree<GameType>::backpropagate(Node *node, double value) {
         node = node->parent;
         node->visits++;
         node->value += value;
-        game.undo_move();
+        game->undo_move();
     }
 }
 
