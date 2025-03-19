@@ -73,7 +73,6 @@ void Node<GameType>::print_subtree(int depth) const {
     }
 }
 
-
 template <>
 int move_to_index<Chess>(Chess::Move move, bool invert) {
     int from_index, to_index;
