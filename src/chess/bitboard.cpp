@@ -7,12 +7,10 @@
 #include "bitboard.h"
 #include "types.h"
 
-namespace bitboard { // Rewrite as class instead of namespace?    
-    [[nodiscard]] inline Square popLSB(U64 &bb) {
-        int rshift = __builtin_ctzll(bb);
-        bb &= bb - 1;
-        return static_cast<Square>(rshift);
-    }
+Square bitboard::popLSB(U64 &bb) { // Rewrite as class instead of namespace?
+    int rshift = __builtin_ctzll(bb);
+    bb &= bb - 1;
+    return static_cast<Square>(rshift);
 }
 
 std::ostream& operator<<(std::ostream& os, const U64& bb) noexcept {

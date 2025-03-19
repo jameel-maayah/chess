@@ -78,13 +78,16 @@ class Chess {
         
         void print();
         void fancy_print();
+        void fancy_print(Color color);
+
+        U64 bitboard[16]; // Make this private
     private:
         Color stm;
         int ply;
         int fullmoves;
 
         Piece board[NUM_SQUARES];
-        U64 bitboard[16]; //NUM_PIECES
+        //U64 bitboard[16]; //NUM_PIECES
 
         Square white_king, black_king;
 

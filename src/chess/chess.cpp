@@ -17,6 +17,7 @@
 #include "move.h"
 #include "movegen.h"
 #include "attacks.h"
+#include "zobrist.h"
 
 using std::vector;
 
@@ -91,16 +92,14 @@ Chess::Chess(std::string_view fen) {
     halfmove_stack[0] = 0;
     halfmove_counter = 0;
     status = IN_PROGRESS;
-    zobrist_hash = 0;
 
     memset(bitboard, 0ULL, sizeof(bitboard));
 
     for (Square sq = a1; sq <= h8; ++sq) {
         bitboard::set_bit(bitboard[board[sq].type()], sq);
-        //zobrist_hash ^= zobrist_table[sq][board[sq].type()];
     }
 
-    zobrist_history[ply] = zobrist_hash;
+    zobrist_history[ply] = Zobrist::init_hash(*this);
 }
 
 Chess::~Chess() { /* might need later? */ }
@@ -265,31 +264,24 @@ void Chess::make_move(const Move move) {
         }
     }
 
-    /* 
-    zobrist_hash ^= zobrist_table[source][piece];
-    zobrist_hash ^= zobrist_table[target][piece];
-    if (capture) {
-        zobrist_hash ^= zobrist_table[target][capture];
-    }
-
-    zobrist_hash ^= zobrist_stm;
+    zobrist_hash = Zobrist::update_hash(zobrist_hash, move, piece, capture);
     zobrist_history[ply] = zobrist_hash;
     
-    int last_irreversible = game->fifty_move[game->fifty_move_counter];
+    int last_irreversible = halfmove_stack[halfmove_counter];
     int repetitions = 1;
 
     if (last_irreversible >= 8) { 
         for (int i = ply - 2; i >= ply - last_irreversible; i -= 2) {
-            if (zobrist_history[i] == game->zobrist_hash) {
+            if (zobrist_history[i] == zobrist_hash) {
                 ++repetitions;
             }
             if (repetitions >= 3) {
-                game->status = Status::THREEFOLD;
+                status = Status::THREEFOLD;
                 return;
             }
         }
     }
-    */
+    
 }
 
 void Chess::undo_move() {
@@ -320,16 +312,7 @@ void Chess::undo_move() {
         black_king = source;
     }
 
-    /*
-    zobrist_hash ^= zobrist_table[IX(piece_x, piece_y)][piece + 6];
-    zobrist_hash ^= zobrist_table[IX(target_x, target_y)][piece + 6];
-    if (!capture.empty()) {
-        zobrist_hash ^= zobrist_table[target][capture.type()];
-    }
-
-    zobrist_hash ^= zobrist_stm;
-    */
-
+    zobrist_hash = Zobrist::update_hash(zobrist_hash, move, piece, capture);
     stm = ~stm;
 }
 
@@ -465,16 +448,10 @@ bool Chess::is_attacked(const Square sq) {
 
 
 void Chess::print() {
-    //printf("ply %d, status %d, hash %d, lastmove %s\n", ply, status, zobrist_hash, 
-    std::cout << ply << " " << status << " " << std::to_string(zobrist_hash) << " " << std::string(move_history[ply-1]) << std::endl;
-
-    /*
-    // todo: stop printing board upside down
-    for (Square sq = a1; sq < NULL_SQ; ++sq) {
-        std::cout << std::string(board[sq]);
-        if (int(sq+1) % 8 == 0) std::cout << std::endl;
-    }
-    */
+    std::cout << "Ply: " << ply << 
+                 " Status: " << status << 
+                 " Hash: " << std::to_string(zobrist_hash) << 
+                 " Last move: " << std::string(move_history[ply-1]) << std::endl;
 
     for (int rank = 7; rank >= 0; --rank) {
         for (int file = 0; file < 8; ++file) {
@@ -483,7 +460,6 @@ void Chess::print() {
         }
         std::cout << std::endl;
     }
-    // todo: ascii piece representations
 }
 
 void Chess::fancy_print() {
@@ -541,11 +517,13 @@ void Chess::fancy_print() {
                 }
 
                 if (ply && move_history[ply - 1].target() == sq) {
-                    //cout << "\033[5m ";
                     cout << "\033[0m\033[42m ";
                     fputwc(wc, stdout);
                     cout << "\033[42m ";
-                    //cout << " \033[0m";
+                } else if ((sq == white_king || sq == black_king) && is_attacked(sq)) {
+                    cout << "\033[0m\033[41m ";
+                    if (get_status()) fputwc(L'☠', stdout); else fputwc(wc, stdout);
+                    cout << "\033[41m ";
                 } else {
                     cout << " ";
                     fputwc(wc, stdout);
@@ -568,5 +546,95 @@ void Chess::fancy_print() {
     }
 
     cout << "\033[3m╰❇a❇✤b✤❃c❃✤d✤✤e✤❃f❃✤g✤❇h❇╯\033[0m\n";
+    cout << "\e[0;32m\n";
+}
+
+void Chess::fancy_print(Color color) {
+    using std::cout;
+
+    if (color == WHITE) {
+        return Chess::fancy_print();
+    }
+
+    setlocale(LC_ALL, "");
+    fwide(stdout, 1);
+
+    //std::cout << ply << " " << status << " " << std::to_string(zobrist_hash) << " " << std::string(move_history[ply-1]) << std::endl;
+
+    cout << "╭❖✤⚜━❃━❇━❃━❇━━❇━❃━❇━❃━⚜✤❖╮\n";
+
+    for (int rank = 0; rank < 8; ++rank) {
+        //printf("\033[0;37m");
+        cout << "\033[0m";
+        cout << rank + 1;
+
+        for (int file = 7; file >= 0; --file) {
+            Square sq = static_cast<Square>(rank * 8 + file);
+            
+            cout << "\033[0m";
+
+            if ((rank + file) % 2 == 0) {
+                cout << "\033[48;5;143m";//"\033[48;5;64m";//"\033[48;5;58m";//"\033[48;5;52m";
+            } else {
+                cout << "\033[47m";//"\033[48;5;245m";
+            }
+
+            if (!at(sq).empty()) {
+                Piece piece = at(sq);
+
+                if (piece.color() == WHITE) {
+                    cout << "\033[38;5;136m";//"\033[38;5;220m";//"\033[38;5;222m";
+                } else {
+                    cout << "\033[38;5;94m";//"\033[116;58;52m";//"\033[38;5;52m";//"\033[38;5;94m";
+                }
+
+                wchar_t wc;
+
+                switch (piece.type()) {
+                    case Piece::WHITE_PAWN: wc = L'♟'; break;
+                    case Piece::WHITE_KNIGHT: wc = L'♞'; break;
+                    case Piece::WHITE_BISHOP: wc = L'♝'; break;
+                    case Piece::WHITE_ROOK: wc = L'♜'; break;
+                    case Piece::WHITE_QUEEN: wc = L'♛'; break;
+                    case Piece::WHITE_KING: wc = L'♚'; break;
+                    case Piece::BLACK_PAWN: wc = L'♟'; break;
+                    case Piece::BLACK_KNIGHT: wc = L'♞'; break;
+                    case Piece::BLACK_BISHOP: wc = L'♝'; break;
+                    case Piece::BLACK_ROOK: wc = L'♜'; break;
+                    case Piece::BLACK_QUEEN: wc = L'♛'; break;
+                    case Piece::BLACK_KING: wc = L'♚'; break;
+                    case Piece::EMPTY: wc = L'.'; break;
+                }
+
+                if (ply && move_history[ply - 1].target() == sq) {
+                    cout << "\033[0m\033[42m ";
+                    fputwc(wc, stdout);
+                    cout << "\033[42m ";
+                } else if ((sq == white_king || sq == black_king) && is_attacked(sq)) {
+                    cout << "\033[0m\033[41m ";
+                    if (get_status()) fputwc(L'☠', stdout); else fputwc(wc, stdout);
+                    cout << "\033[41m ";
+                } else {
+                    cout << " ";
+                    fputwc(wc, stdout);
+                    cout << " ";
+                }
+            } else {
+                if (ply && move_history[ply - 1].source() == sq) {
+                    cout << "\033[0m";
+                    cout << "\033[42m";
+                }
+                cout << "   ";
+            }
+
+        }
+
+        cout << "\033[49m";
+        //printf("\033[0;37m");
+        cout << "\033[0m";
+        cout << rank + 1 << std::endl;
+    }
+
+    cout << "\033[3m╰❇h❇✤g✤❃f❃✤e✤✤d✤❃c❃✤b✤❇a❇╯\033[0m\n";
     cout << "\e[0;32m\n";
 }

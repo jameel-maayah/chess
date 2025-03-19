@@ -9,34 +9,50 @@ public:
     using Node = Node<GameType>;
 
 private:
-    std::unique_ptr<Node> root;
-    GameType *game;
+    Node* root;
+    GameType* game;
 
 public:
     MCTree()
     : game(nullptr),
       root(nullptr) {}
-    MCTree(GameType& game) 
+
+    MCTree(GameType& game)
     : game(&game),
-      root(std::make_unique<Node>(nullptr, typename GameType::Move(), typename GameType::Color())) 
+      root(new Node(nullptr, typename GameType::Move(), typename GameType::Color())) 
     { 
-        root->color = ~game.side_to_move(); 
+        root->color = game.side_to_move(); 
     }
-    ~MCTree() { /* delete game ? */}
+
+    ~MCTree() {
+        delete_tree(root);
+    }
+
+    void delete_tree(Node* node) {
+        if (node) {
+            for (auto* child : node->children) {
+                delete_tree(child);
+            }
+            delete node;
+        }
+    }
 
     void init_root(GameType& game) {
         this->game = &game;
-        root = std::make_unique<Node>(nullptr, typename GameType::Move(), typename GameType::Color());
+
+        delete root;
+        root = new Node(nullptr, typename GameType::Move(), typename GameType::Color());
         root->color = ~game.side_to_move(); 
     }
-    Node *get_root() const { return root.get(); }
-    Node *traverse();
+
+    Node* get_root() const { return root; }
+    Node* traverse();
 
     void backpropagate(Node* leaf, double value);
 
-    Node *best_child();
+    Node* best_child();
     std::vector<Node> principal_variation();
-    void make_move(const Move move);
+    void update_root(const Move move);
 
     void print();
 };

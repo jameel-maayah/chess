@@ -25,5 +25,6 @@ struct ChessNetImpl : torch::nn::Module {
 
 TORCH_MODULE(ChessNet);
 
+
 void test_inference_speed(int batch_size, int seconds);
 int64_t count_parameters(ChessNet &model);
