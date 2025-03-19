@@ -39,6 +39,10 @@ class Move {
 
         // todo: overload < > for move ordering
 
+        bool operator==(const Move& other) const {
+            return this->source() == other.source() && this->target() == other.target();
+        }
+
         explicit operator std::string() const {
             int source_rank = source() / 8, source_file = source() % 8;
             int target_rank = target() / 8, target_file = target() % 8;

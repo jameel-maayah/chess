@@ -14,7 +14,7 @@ namespace bitboard {
     inline void toggle_bit(U64 &bb, Square sq) { bb ^= (1ULL << sq); }
     inline void toggle_bits(U64 &bb, Square sq1, Square sq2) { bb ^= ((1ULL << sq1) | (1ULL << sq2)); }
 
-    [[nodiscard]] inline Square popLSB(U64 &bb);
+    [[nodiscard]] Square popLSB(U64 &bb);
 }
 
 void print_bitboard(const U64 bb);

@@ -5,11 +5,10 @@
 
 template <typename GameType>
 Node<GameType> *MCTree<GameType>::traverse() {
-    Node *node = root.get();
+    Node *node = root;
 
     while (node->fully_expanded()) {
         node = node->best_uct();
-        std::cout << node << std::endl;
         game->make_move(node->move);
 
         if (game->get_status()) {
@@ -25,7 +24,10 @@ Node<GameType> *MCTree<GameType>::traverse() {
                     
                 default:
                     break;
+
+                // Value of a draw is the contempt factor
             }
+            
             node->num_children = 0;
             node->is_ready = true;
 
@@ -49,6 +51,44 @@ void MCTree<GameType>::backpropagate(Node *node, double value) {
         game->undo_move();
     }
 }
+
+template <typename GameType>
+Node<GameType>* MCTree<GameType>::best_child() {
+    Node *best = nullptr;
+    int max_visits = -1;
+
+    for (auto* child : root->children) {
+        if (child->get_visits() > max_visits) {
+            max_visits = child->get_visits();
+            best = child;
+        }
+    }
+
+    return best;
+}
+
+template <typename GameType>
+void MCTree<GameType>::update_root(Move move) {
+    Node *new_root = nullptr;
+    typename GameType::Color color = ~root->color;
+
+    for (auto *child : root->children) {
+        if (child->move == move) {
+            new_root = child;
+            new_root->parent = nullptr;
+            break;
+        } else {
+            delete child;
+        }
+    }
+
+    if (new_root) {
+        root = new_root;
+    } else {
+        root = new Node(nullptr, Move(), color);
+    }
+}
+
 
 template <typename GameType>
 void MCTree<GameType>::print() {

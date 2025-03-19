@@ -9,11 +9,15 @@
 #include "chess.h"
 #include "movegen.h"
 
-#define ROOT_PST 1.2
+#define ROOT_PST 1.
 #define PST 1.1
 #define ROOT_CPUCT 4
-#define CPUCT 2.5
+#define CPUCT 3
 
+
+// Move this somewhere else
+template <typename GameType>
+int move_to_index(typename GameType::Move move, bool invert);
 
 
 template <typename GameType>
@@ -27,7 +31,7 @@ public:
         : visits(0),
           value(0.0f),
           move(move),
-          policy_index(-1),
+          policy_index(move_to_index<GameType>(move, color==Color::WHITE)),
           is_ready(false),
           terminal_status(IN_PROGRESS),
           color(color),
@@ -35,7 +39,7 @@ public:
           parent(parent) {}
 
     ~Node() {
-        for (auto child : children) {
+        for (auto *child : children) {
             delete child;
         }
     }
@@ -69,6 +73,10 @@ public:
 
     // make private
 //private:
+
+    float checksum_p;
+    float checksum_v;
+
     int visits;
     double value;
 
@@ -82,6 +90,6 @@ public:
     Status terminal_status;
 
     Node* parent;
-    std::vector<Node*> children;
+    std::vector<Node *> children;
     int num_children;
 };

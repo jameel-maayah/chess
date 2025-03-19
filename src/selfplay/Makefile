@@ -22,15 +22,21 @@ LDFLAGS += -L$(LIBTORCH_DIR)/lib -ltorch -ltorch_cpu -lc10
 CFLAGS += -I$(LIBTORCH_DIR)/include -I$(LIBTORCH_DIR)/include/torch/csrc/api/include
 
 
-EXEC = selfplay
-SRCS = train.cpp
-OBJS = $(SRCS:.cpp=.o)
+TRAINING_EXEC = train
+VERSUS_EXEC = versus
+TRAINING_SRC = train.cpp
+VERSUS_SRC = versus.cpp
+TRAINING_OBJS = $(TRAINING_SRC:.cpp=.o)
+VERSUS_OBJS = $(VERSUS_SRC:.cpp=.o)
 
-$(EXEC): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $@
+$(TRAINING_EXEC): $(TRAINING_OBJS)
+	$(CC) $(CFLAGS) $(TRAINING_OBJS) $(LDFLAGS) -o $@
+
+$(VERSUS_EXEC): $(VERSUS_OBJS)
+	$(CC) $(CFLAGS) $(VERSUS_OBJS) $(LDFLAGS) -o $@
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm -f *.o $(EXEC)
+	rm -f *.o $(TRAINING_EXEC) $(VERSUS_EXEC)

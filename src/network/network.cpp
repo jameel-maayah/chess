@@ -14,8 +14,8 @@ ChessNet model;
 
 // Dummy net for testing
 ChessNetImpl::ChessNetImpl() {
-    const int filters = 64;
-    const int num_blocks = 6;
+    const int filters = 96;//16; // 64, 6
+    const int num_blocks = 6;//2;
 
     conv1 = register_module("conv1", torch::nn::Conv2d(torch::nn::Conv2dOptions(13, filters, 3).padding(1)));
     bn1 = register_module("bn1", torch::nn::BatchNorm2d(filters));
@@ -38,7 +38,8 @@ ChessNetImpl::ChessNetImpl() {
     value_bn = register_module("value_bn", torch::nn::BatchNorm2d(1));
     value_fc1 = register_module("value_fc1", torch::nn::Linear(8 * 8, 256));
 
-    value_fc2 = register_module("value_fc2", torch::nn::Linear(256, 3));
+    value_fc2 = register_module("value_fc2", torch::nn::Linear(256, 1));
+    //value_fc2 = register_module("value_fc2", torch::nn::Linear(256, 3));
 }
 
 std::pair<torch::Tensor, torch::Tensor> ChessNetImpl::forward(torch::Tensor x) {
@@ -51,6 +52,9 @@ std::pair<torch::Tensor, torch::Tensor> ChessNetImpl::forward(torch::Tensor x) {
 
     auto v = torch::relu(value_bn(value_conv(x)));
     v = v.view({v.size(0), -1});
+    
+    //v = torch::relu(value_fc1(v));
+    //v = torch::tanh(value_fc2(v));
     
     v = torch::relu(value_fc1(v));
     v = value_fc2(v);
