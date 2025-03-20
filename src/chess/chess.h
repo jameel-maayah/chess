@@ -72,6 +72,10 @@ class Chess {
                     bitboard[Piece::BLACK_KING]);
         }
 
+        [[nodiscard]] inline U64 color_mask(Color color) const {
+            return (color == WHITE) ? white_mask() : black_mask();
+        }
+
         [[nodiscard]] inline U64 piece_mask(const Piece piece) const {
             return bitboard[piece.type()];
         }
