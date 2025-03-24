@@ -32,7 +32,7 @@ As the training script is still being reworked, I have not yet pushed it to this
 ```\n.\n
 make versus
 cd selfplay
-./versus weights/pv_6b96.pt
+./versus weights/pv_6b96.pt [black/white] [cpu_num_iterations]
 ```
 
 If ```make``` is unable to find the location of your LibTorch installation, specify it manually:
