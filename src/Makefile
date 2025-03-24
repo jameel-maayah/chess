@@ -1,4 +1,12 @@
-.PHONY: all chess network mcts clean
+.PHONY: all chess network mcts selfplay versus clean
+
+LIBTORCH_DIR ?= $(shell brew --prefix pytorch 2>/dev/null)
+
+ifeq ($(LIBTORCH_DIR),)
+    $(error "LIBTORCH_DIR is not set. Please specify it manually, e.g., 'make LIBTORCH_DIR=/path/to/libtorch'")
+endif
+
+export LIBTORCH_DIR
 
 all: chess network mcts
 
@@ -13,6 +21,10 @@ mcts: chess
 
 selfplay: chess network mcts
 	$(MAKE) -C selfplay
+
+versus: chess network mcts
+	$(MAKE) -C selfplay versus
+
 clean:
 	$(MAKE) -C chess clean
 	$(MAKE) -C network clean

@@ -66,7 +66,7 @@ template <typename GameType>
 void Node<GameType>::print_subtree(int depth) const {
     if (!visits) return;
     for (int i = 0; i < depth; i++) printf(i == depth - 1 ? "╰━━━━━>" : "       "); //"⤷"
-    std::cout << std::format("{}: Visits={} Value={:.2f} Q={:.2f} Prob={:.6f} Index={} Children={} Color={} P={} V={}", std::string(move), visits, value, Q(), prob, policy_index, num_children, (color == WHITE ? "White" : "Black"), checksum_p, checksum_v) << std::endl;
+    std::cout << std::format("{}: Visits={} Value={:.2f} Q={:.2f} Prob={:.6f} Index={} Children={} Color={}", std::string(move), visits, value, Q(), prob, policy_index, num_children, (color == WHITE ? "White" : "Black")) << std::endl;
 
     for (const Node *child : children) {
         child->print_subtree(depth + 1);

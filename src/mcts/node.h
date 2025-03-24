@@ -20,6 +20,7 @@ template <typename GameType>
 int move_to_index(typename GameType::Move move, bool invert);
 
 
+//#pragma pack(1)
 template <typename GameType>
 class Node {
 public:
@@ -71,11 +72,8 @@ public:
     //void set_prob(double prob_val) { prob = prob_val; }
     //void set_ready(bool ready) { is_ready = ready; }
 
-    // make private
+    // make private?
 //private:
-
-    float checksum_p;
-    float checksum_v;
 
     int visits;
     double value;
@@ -89,7 +87,7 @@ public:
     bool is_ready;
     Status terminal_status;
 
-    Node* parent;
+    Node *parent;
     std::vector<Node *> children;
     int num_children;
 };

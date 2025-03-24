@@ -89,25 +89,12 @@ void MCTsearch(GameType *game, MCTree<GameType> *tree, int iterations) {
             value_tensor = torch::softmax(value_tensor, -1);      
             policy_tensor = policy_tensor.to(torch::kCPU);
             value_tensor = value_tensor.to(torch::kCPU); 
-            
-            /*
-            torch::TensorAccessor policy_accessor;// = policy_tensor.accessor<float, 2>();
-            torch::TensorAccessor value_accessor;// = value_tensor.accessor<float, 2>();
-        
-            if constexpr (precision == torch::kFloat16) {
-                policy_accessor = policy_tensor.accessor<at::Half, 2>();
-                value_accessor = value_tensor.accessor<at::Half, 2>();
-            } else if constexpr (precision == torch::kFloat32) {
-                policy_accessor = policy_tensor.accessor<float, 2>();
-                value_accessor = value_tensor.accessor<float, 2>();
-            }
-            */
 
             auto policy_accessor = policy_tensor.accessor<at::Half, 2>();
             auto value_accessor = value_tensor.accessor<at::Half, 2>();
             
             float sum_logits = 0;
-            float pst = 1;//(leaf->parent ? PST : ROOT_PST);
+            float pst = 1.1;//(leaf->parent ? PST : ROOT_PST);
 
             for (int c = 0; c < leaf->num_children; c++) {
                 Node<GameType> *child = leaf->children[c];
@@ -155,11 +142,41 @@ Square file_rank_to_square(int file, int rank) {
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
     Zobrist::init_zobrist();
 
+    if (argc < 2) {
+        std::cerr << "Usage: ./versus <model_path.pt> [side (white/black)] [iterations (positive integer)]" << std::endl;
+        return 1;
+    }
+
+    std::string model_path = argv[1];
+    std::string side = "white";
+    int search_iterations = 801;
+
+    if (argc >= 3) {
+        side = argv[2];
+        if (side != "white" && side != "black") {
+            std::cerr << "Invalid side. Use 'white' or 'black'." << std::endl;
+            return 1;
+        }
+    }
+
+    if (argc >= 4) {
+        try {
+            search_iterations = std::stoi(argv[3]) + 1;
+            if (search_iterations <= 0) {
+                std::cerr << "Invalid number of iterations." << std::endl;
+                return 1;
+            }
+        } catch (const std::invalid_argument& e) {
+            std::cerr << "Invalid argument. Iterations be a positive integer." << std::endl;
+            return 1;
+        }
+    }
+
     Chess game = Chess(START_FEN);
-    torch::load(model,  "../weights/pv_6b96_epoch_14.pt");  //pv_6b96_epoch_14.pt
+    torch::load(model, model_path);
 
     if (torch::mps::is_available()) {
         device = torch::Device(torch::kMPS);
@@ -177,18 +194,10 @@ int main() {
     model->eval();
 
     std::cout << count_parameters(model) << " Trainable parameters" << std::endl;
-
-    /*
-    game.make_move(Move(e2, e4));
-    game.make_move(Move(e7, e5));
-    game.make_move(Move(d1, f3));
-    game.make_move(Move(a7, a6));
-    game.make_move(Move(f1, c4));
-    //game.make_move(Move(a6, a5));
-    */
+    std::cout << "Node size " << sizeof(Node<Chess>) << " bytes" << std::endl;
 
     MCTree<Chess> tree(game);
-    MCTsearch<Chess>(&game, &tree, 801);
+    MCTsearch<Chess>(&game, &tree, search_iterations);
 
     tree.print();
     game.fancy_print();
@@ -196,11 +205,12 @@ int main() {
     
     while (!game.get_status()) {
         Move move;
-        if (game.side_to_move() == WHITE) {
+        if (game.side_to_move() == (side == "white" ? WHITE : BLACK)) {
             int from_y, to_y;
             int from_x, to_x;
             char promo;
 
+            std::cout << "Enter a move (i.e. e2e4): ";
             std::string movestr;
             std::cin >> movestr;
 
@@ -209,8 +219,6 @@ int main() {
             from_y = movestr[1] - '0' - 1;
             to_y = movestr[3] - '0' - 1;
             if (movestr.length() > 4) promo = movestr[4];
-
-            printf("%d %d %d %d\n", from_x, to_x, from_y, to_y);
 
             move = Move(file_rank_to_square(from_x, from_y), file_rank_to_square(to_x, to_y));
 
@@ -233,7 +241,7 @@ int main() {
 
             std::cout << "Predicted: " << (char) ('a' + (predicted_move.source() % 8)) << (predicted_move.source() / 8) + 1 << (char) ('a' + (predicted_move.target() % 8)) << (predicted_move.target() / 8) + 1 << std::endl;
         } else {
-            MCTsearch<Chess>(&game, &tree, 801);
+            MCTsearch<Chess>(&game, &tree, search_iterations);
             tree.print();
             move = tree.best_child()->move;
         }
@@ -250,7 +258,9 @@ int main() {
         tree.update_root(move);
 
         predicted_move = (tree.best_child()) ? tree.best_child()->move : Move();
-        game.fancy_print(game.side_to_move());
-        game.print();
+        game.fancy_print(side == "white" ? WHITE : BLACK);
+        //game.print();
     }
+
+    return 0;
 }
