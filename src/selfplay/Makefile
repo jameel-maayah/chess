@@ -16,7 +16,7 @@ NN_INCLUDE = -I$(NN_DIR)
 LDFLAGS = $(CHESS_LIB) $(MCTS_LIB) $(NN_LIB)
 INCLUDES = $(CHESS_INCLUDE) $(MCTS_INCLUDE) $(NN_INCLUDE)
 
-LIBTORCH_DIR = /opt/homebrew/Cellar/pytorch/2.5.1_1
+#LIBTORCH_DIR = /opt/homebrew/Cellar/pytorch/2.5.1_1
 
 LDFLAGS += -L$(LIBTORCH_DIR)/lib -ltorch -ltorch_cpu -lc10
 CFLAGS += -I$(LIBTORCH_DIR)/include -I$(LIBTORCH_DIR)/include/torch/csrc/api/include

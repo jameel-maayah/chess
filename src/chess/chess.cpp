@@ -477,7 +477,6 @@ void Chess::fancy_print() {
         cout << "\033[0m";
         cout << rank + 1;
 
-
         for (int file = 0; file < 8; ++file) {
             Square sq = static_cast<Square>(rank * 8 + file);
             
@@ -485,8 +484,10 @@ void Chess::fancy_print() {
 
             if ((rank + file) % 2 == 0) {
                 cout << "\033[48;5;143m";//"\033[48;5;64m";//"\033[48;5;58m";//"\033[48;5;52m";
+                //cout << "\033[48;5;81m";
             } else {
                 cout << "\033[47m";//"\033[48;5;245m";
+                //cout << "\033[48;5;227m";
             }
 
             if (!at(sq).empty()) {
@@ -494,8 +495,10 @@ void Chess::fancy_print() {
 
                 if (piece.color() == WHITE) {
                     cout << "\033[38;5;136m";//"\033[38;5;220m";//"\033[38;5;222m";
+                    //cout << "\033[38;5;1m";
                 } else {
                     cout << "\033[38;5;94m";//"\033[116;58;52m";//"\033[38;5;52m";//"\033[38;5;94m";
+                    //cout << "\033[38;5;12m";
                 }
 
                 wchar_t wc;
