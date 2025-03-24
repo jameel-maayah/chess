@@ -24,7 +24,7 @@ This project requires ```Make``` and ```g++```, as well as LibTorch 2.5.1, which
 And of course, clone this repository:
 ```\n.\n
 git clone https://github.com/jameel-maayah/chess.git
-cd /src
+cd chess/src
 ```
 
 As the training script is still being reworked, I have not yet pushed it to this repository. However, I have included a file of (somewhat) satisfactory model weights I have produced with it, located in the ```/weights``` folder. To try out the engine, run the following from the ```/src``` directory:
