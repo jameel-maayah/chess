@@ -85,6 +85,7 @@ Chess::Chess(std::string_view fen) {
     black_king = e8;
 
     ply = 0;
+    stm = WHITE;
 
     move_history[0] = Move();
     captures[0] = Piece(Piece::EMPTY);
