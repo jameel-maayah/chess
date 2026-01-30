@@ -1,6 +1,6 @@
 # chess
 
-In-progress chess engine implemented in C++ using Monte Carlo Tree Search (MCTS) inspired by the AlphaGo and AlphaZero training frameworks. The engine combines MCTS with a neural network for position evaluation and policy prediction.
+Neural chess engine implemented in C++ using Monte Carlo Tree Search (MCTS) inspired by the AlphaGo and AlphaZero reinforcement learning frameworks, capable of learning chess starting from zero knowledge. The engine combines MCTS with a neural network for position evaluation and policy prediction.
 
 The network produces:
 - A valuation of the current position via the value head
@@ -51,3 +51,23 @@ Specifications:
 - C++23 or higher
 - Libtorch 2.5.1
 - Gnuplot (optional)
+
+# Gallery
+
+<img src="images/train.png" width="600">
+<img src="images/loss.png" width="600">
+
+*The training script*
+
+<img src="images/game.png" width="600">
+
+*Move priors for the starting position. 6x6 chess*
+
+<img src="images/value.png" width="600">
+
+*Evolution of piece values over time*
+
+<img src="images/latent_space.png" width="600">
+<img src="images/latent_space_2d.png" width="600">
+
+*Interactively visualizing the latent space of chess positions. Activation vectors from the penultimate fully connected layer are projected onto the directions of greatest variance using PCA.*
