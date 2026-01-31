@@ -1,5 +1,7 @@
 # chess
 
+<img src="images/weight_plots.gif" width="600">
+
 Neural chess engine implemented in C++ using Monte Carlo Tree Search (MCTS) inspired by the AlphaGo and AlphaZero reinforcement learning frameworks, capable of learning chess starting from zero knowledge. The engine combines MCTS with a neural network for position evaluation and policy prediction.
 
 The network produces:
