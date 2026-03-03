@@ -10,6 +10,8 @@ The network produces:
   
 Both of which are used during search to probe the game tree.
 
+Training elo saturates in 2-3 days on an M1 Macbook Pro.
+
 ***
 # Structure
 ```\n.\n
